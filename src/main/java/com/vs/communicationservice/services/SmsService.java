@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class SmsService {
 
     private final SmsRepository smsRepository;
+    private final SmsFactory smsFactory;
 
     public void addSms(SmsEntity sms) {
         sms.setStatus(CommunicationStatus.NEW);
@@ -29,7 +30,6 @@ public class SmsService {
 
     @Scheduled(fixedDelayString = "PT3S")
     public void sendSmsBatch() {
-        smsRepository.getAllByStatus(CommunicationStatus.NEW).forEach(System.out::println);
-        new SmsCommunicationProvider(smsRepository.getAllByStatus(CommunicationStatus.NEW));
+        smsFactory.defineProvider().sendSms(smsRepository.findByStatus(CommunicationStatus.NEW));
     }
 }
